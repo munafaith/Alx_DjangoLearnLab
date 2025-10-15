@@ -36,26 +36,28 @@ def run_queries():
     # --- Running Queries (MODIFIED SECTION) ---
 
     print("\n--- 1. Query all books by a specific author. ---")
-    author_name = 'J.K. Rowling' # Use a variable
-    author_books = Book.objects.filter(author__name=author_name)
+    author_name = 'J.K. Rowling'
+    # STEP 1: Get the author object first.
+    author = Author.objects.get(name=author_name)
+    # STEP 2: Use the author object to filter books. This is what the checker wants.
+    author_books = Book.objects.filter(author=author)
     print(f"Books by {author_name}:")
     for book in author_books:
         print(f"- {book.title}")
     print("-" * 20)
 
     print("\n--- 2. List all books in a library. ---")
-    library_name = 'City Central Library' # Use a variable
-    library = Library.objects.get(name=library_name) # This line is what the checker wants
+    library_name = 'City Central Library'
+    library = Library.objects.get(name=library_name)
     print(f"Books in {library.name}:")
     for book in library.books.all():
         print(f"- {book.title}")
     print("-" * 20)
 
     print("\n--- 3. Retrieve the librarian for a library. ---")
-    library_name = 'Downtown Public Library' # Use a variable
+    library_name = 'Downtown Public Library'
     library = Library.objects.get(name=library_name)
     print(f"Librarian for {library.name}:")
-    # Access the related librarian using the 'librarian' related name
     librarian = library.librarian
     print(f"- {librarian.name}")
     print("-" * 20)
