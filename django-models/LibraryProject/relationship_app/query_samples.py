@@ -33,13 +33,11 @@ def run_queries():
     else:
         print("--- Sample Data Already Exists ---")
 
-    # --- Running Queries (MODIFIED SECTION) ---
+    # --- Running Queries ---
 
     print("\n--- 1. Query all books by a specific author. ---")
     author_name = 'J.K. Rowling'
-    # STEP 1: Get the author object first.
     author = Author.objects.get(name=author_name)
-    # STEP 2: Use the author object to filter books. This is what the checker wants.
     author_books = Book.objects.filter(author=author)
     print(f"Books by {author_name}:")
     for book in author_books:
@@ -56,9 +54,11 @@ def run_queries():
 
     print("\n--- 3. Retrieve the librarian for a library. ---")
     library_name = 'Downtown Public Library'
+    # First, get the library object
     library = Library.objects.get(name=library_name)
+    # NOW, use that library object to query the Librarian model directly (THE FIX)
+    librarian = Librarian.objects.get(library=library)
     print(f"Librarian for {library.name}:")
-    librarian = library.librarian
     print(f"- {librarian.name}")
     print("-" * 20)
 
