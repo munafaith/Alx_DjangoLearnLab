@@ -1,48 +1,41 @@
 from django.shortcuts import render
+# api/views.py
 
 from rest_framework import generics, permissions
-from .models import Author, Book
-from .serializers import AuthorSerializer, BookSerializer
+from .models import Book
+from .serializers import BookSerializer
 
-class AuthorListCreateView(generics.ListCreateAPIView):
-    """
-    View to list all authors and create a new author.
-    - GET: Returns a list of all authors with their nested books.
-    - POST: Creates a new author. (Authentication required)
-    """
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+# Permission setting for read-only vs. write access
+IsAuthenticatedOrReadOnly = permissions.IsAuthenticatedOrReadOnly
 
-class AuthorDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    View to retrieve, update, or delete a single author instance.
-    - GET: Retrieves a single author by their ID.
-    - PUT/PATCH: Updates an author. (Authentication required)
-    - DELETE: Deletes an author. (Authentication required)
-    """
-    queryset = Author.objects.all()
-    serializer_class = AuthorSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+# --- Book Views ---
 
-
-class BookListCreateView(generics.ListCreateAPIView):
-    """
-    View to list all books and create a new book.
-    - GET: Returns a list of all books.
-    - POST: Creates a new book. (Authentication required)
-    """
+class BookListView(generics.ListAPIView):
+    """ View to list all books. Read-only access for everyone. """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """
-    View to retrieve, update, or delete a single book instance.
-    - GET: Retrieves a single book by its ID.
-    - PUT/PATCH: Updates a book. (Authentication required)
-    - DELETE: Deletes a book. (Authentication required)
-    """
+class BookDetailView(generics.RetrieveAPIView):
+    """ View to retrieve a single book. Read-only access for everyone. """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+class BookCreateView(generics.CreateAPIView):
+    """ View to create a new book. Requires authentication. """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class BookUpdateView(generics.UpdateAPIView):
+    """ View to update an existing book. Requires authentication. """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+class BookDeleteView(generics.DestroyAPIView):
+    """ View to delete a book. Requires authentication. """
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
