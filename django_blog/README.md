@@ -52,3 +52,14 @@ The blog includes full CRUD (Create, Read, Update, Delete) functionality for pos
 * **Delete:** Only the original author of a post can delete it. The "Delete" link will appear on the post's detail page for the author, or they can navigate to `/posts/<id>/delete/`.
 
 Permissions are enforced using Django's `LoginRequiredMixin` for creating posts and `UserPassesTestMixin` to ensure only authors can edit or delete their own content.
+
+## Comment System
+
+The blog features a full comment system, allowing users to engage with posts.
+
+* **Create:** Authenticated users can add comments to any post via the form on the post's detail page.
+* **Read:** All users can view comments on a post's detail page.
+* **Update:** Users can only edit their own comments. The "Edit" link will appear next to their comments.
+* **Delete:** Users can only delete their own comments. The "Delete" link will appear next to their comments.
+
+Permissions are enforced to ensure users can only modify their own content.

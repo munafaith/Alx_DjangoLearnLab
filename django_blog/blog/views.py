@@ -10,8 +10,9 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Post
-
+from django.shortcuts import get_object_or_404
+from .models import Post, Comment
+from .forms import UserRegisterForm, UserUpdateForm, PostForm, CommentForm
 
 def home(request):
     """
@@ -65,10 +66,33 @@ class PostListView(ListView):
 
 class PostDetailView(DetailView):
     """
-    View to display the full content of a single blog post. Accessible to all users.
+    Displays a single post and handles comment submission.
     """
     model = Post
     template_name = 'blog/post_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # This method handles new comment creation
+        if not request.user.is_authenticated:
+            return redirect('login')
+
+        post = self.get_object()
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return redirect('post-detail', pk=post.pk)
+        # If form is not valid, re-render the page with the form and errors
+        context = self.get_context_data()
+        context['comment_form'] = form
+        return self.render_to_response(context)
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     """
@@ -77,7 +101,6 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
-    success_url = '/' # Redirect to homepage after successful creation
 
     def form_valid(self, form):
         # Set the author of the post to the currently logged-in user
@@ -91,7 +114,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
-    success_url = '/'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -108,8 +130,39 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     model = Post
     template_name = 'blog/post_confirm_delete.html'
-    success_url = '/'
 
     def test_func(self):
         post = self.get_object()
         return self.request.user == post.author
+    
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """
+    View to allow the author of a comment to edit it.
+    """
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def get_success_url(self):
+        # Redirect back to the post detail page after updating a comment
+        return self.object.post.get_absolute_url()
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """
+    View to allow the author of a comment to delete it.
+    """
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
+
+    def test_func(self):
+        comment = self.get_object()
+        return self.request.user == comment.author
+
