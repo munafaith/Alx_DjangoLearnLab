@@ -124,12 +124,12 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         comment = self.get_object()
         return self.request.user == comment.author
     
-class TaggedPostListView(ListView):
+class PostByTagListView(ListView):
     """
     View to display a list of posts filtered by a specific tag.
     """
     model = Post
-    template_name = 'blog/home.html' # Reuse the home template
+    template_name = 'blog/home.html' 
     context_object_name = 'posts'
 
     def get_queryset(self):
