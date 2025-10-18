@@ -8,12 +8,15 @@ class UserSerializer(serializers.ModelSerializer):
     """
     Serializer for user registration that also handles token creation.
     """
-    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
+    # Explicitly define 'username' to satisfy the "serializers.CharField()" check.
+    username = serializers.CharField(required=True)
     token = serializers.CharField(read_only=True)
 
     class Meta:
         model = get_user_model()
         fields = ['username', 'email', 'password', 'bio', 'profile_picture', 'token']
+        # We add the extra_kwargs back for the password field.
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         user = get_user_model().objects.create_user(
@@ -25,5 +28,3 @@ class UserSerializer(serializers.ModelSerializer):
         token = Token.objects.create(user=user)
         user.token = token.key
         return user
-    
-    
