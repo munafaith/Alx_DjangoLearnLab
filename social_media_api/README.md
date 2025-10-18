@@ -40,3 +40,90 @@ The API supports full CRUD operations for posts and comments.
 * **Permissions:** All users can view comments. Only authenticated users can create comments. Only the author of a comment can edit or delete it.
 
 **Note:** Creating, updating, or deleting content requires an `Authorization: Token <your_token>` header in your request.
+
+## API Testing and Validation Examples
+
+This section provides examples of how to interact with and test the API using `curl`.
+
+### 1. Authentication
+
+First, obtain an authentication token by logging in.
+
+**Request:**
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"username": "your_username", "password": "your_password"}' [http://127.0.0.1:8000/api/login/](http://127.0.0.1:8000/api/login/)
+
+**Success Response:**
+
+{
+    "token": "YOUR_UNIQUE_TOKEN_STRING"
+}
+
+Save this token for the next steps.
+
+2. Creating a Post (Authenticated)
+Use your token in the Authorization header to create a new post.
+
+Request:
+
+curl -X POST -H "Authorization: Token YOUR_UNIQUE_TOKEN_STRING" -H "Content-Type: application/json" -d '{"title": "My First Post", "content": "This is the content of my first post."}' [http://127.0.0.1:8000/api/posts/](http://127.0.0.1:8000/api/posts/)
+
+** Success Response (Status 201 Created):**
+{
+    "id": 1,
+    "author": "your_username",
+    "title": "My First Post",
+    "content": "This is the content of my first post.",
+    "created_at": "2025-10-18T13:45:00.000000Z",
+    "updated_at": "2025-10-18T13:45:00.000000Z"
+}
+
+"""3. Listing and Searching Posts (Unauthenticated)
+Anyone can view and search for posts.
+
+Request (List): """
+
+curl [http://127.0.0.1:8000/api/posts/](http://127.0.0.1:8000/api/posts/)
+
+**Success Response (Paginated):**
+
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "author": "your_username",
+            "title": "My First Post",
+            "content": "This is the content of my first post.",
+            "created_at": "...",
+            "updated_at": "..."
+        }
+    ]
+}
+
+Request (Search):
+
+curl "[http://127.0.0.1:8000/api/posts/?search=First](http://127.0.0.1:8000/api/posts/?search=First)"
+
+The response will be a filtered list of posts containing the word "First".
+
+4. Testing Permissions (Updating a Post)
+Only the author of a post can update it.
+
+Request (Successful Update by Author):
+
+curl -X PUT -H "Authorization: Token YOUR_UNIQUE_TOKEN_STRING" -H "Content-Type: application/json" -d '{"title": "My Updated Post", "content": "Updated content."}' [http://127.0.0.1:8000/api/posts/1/](http://127.0.0.1:8000/api/posts/1/)
+
+Success Response: The updated post object is returned.
+
+Request (Failed Update by Another User): If a different authenticated user (with a different token) tried to update post #1, they would receive the following error.
+
+Failure Response (Status 403 Forbidden):
+
+{
+    "detail": "You do not have permission to perform this action."
+}
+
+This confirms that the IsOwnerOrReadOnly permission is working correctly.
