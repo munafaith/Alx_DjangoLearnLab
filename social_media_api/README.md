@@ -127,3 +127,34 @@ Failure Response (Status 403 Forbidden):
 }
 
 This confirms that the IsOwnerOrReadOnly permission is working correctly.
+
+## User Follows and Feed
+
+The API supports following other users and viewing a chronological feed of their posts. All endpoints in this section require authentication.
+
+### Follow a User
+* **Endpoint:** `POST /api/follow/<user_id>/`
+* **Description:** Adds the user specified by `user_id` to the authenticated user's "following" list.
+* **Example Request:**
+  ```bash
+  curl -X POST -H "Authorization: Token YOUR_TOKEN" [http://127.0.0.1:8000/api/follow/2/](http://127.0.0.1:8000/api/follow/2/)
+  ```
+* **Success Response:** `{"detail": "You are now following <username>."}`
+
+### Unfollow a User
+* **Endpoint:** `POST /api/unfollow/<user_id>/`
+* **Description:** Removes the user specified by `user_id` from the authenticated user's "following" list.
+* **Example Request:**
+  ```bash
+  curl -X POST -H "Authorization: Token YOUR_TOKEN" [http://127.0.0.1:8000/api/unfollow/2/](http://127.0.0.1:8000/api/unfollow/2/)
+  ```
+* **Success Response:** `{"detail": "You have unfollowed <username>."}`
+
+### View Your Feed
+* **Endpoint:** `GET /api/feed/`
+* **Description:** Returns a paginated list of the most recent posts from all users that you follow.
+* **Example Request:**
+  ```bash
+  curl -X GET -H "Authorization: Token YOUR_TOKEN" [http://127.0.0.1:8000/api/feed/](http://127.0.0.1:8000/api/feed/)
+  ```
+* **Success Response:** A paginated list of post objects.
