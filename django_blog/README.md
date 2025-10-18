@@ -63,3 +63,15 @@ The blog features a full comment system, allowing users to engage with posts.
 * **Delete:** Users can only delete their own comments. The "Delete" link will appear next to their comments.
 
 Permissions are enforced to ensure users can only modify their own content.
+
+## Advanced Features
+
+### Tagging System
+
+* **Functionality:** Posts can be categorized using tags. A post can have multiple tags, and a tag can be associated with multiple posts.
+* **Usage:** When creating or editing a post, tags can be added as a comma-separated list in the "Tags" input field. Clicking on a tag on the post detail page will show all other posts with that same tag.
+
+### Search Functionality
+
+* **Functionality:** A search bar is available in the navigation to search for posts.
+* **Usage:** Users can enter keywords into the search bar. The system will search for matches in both the title and the content of all posts and display the results on a dedicated search results page.

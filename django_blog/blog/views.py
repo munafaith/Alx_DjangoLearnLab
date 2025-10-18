@@ -14,6 +14,8 @@ from django.views.generic import (
 from .models import Post, Comment
 from .forms import UserRegisterForm, UserUpdateForm, PostForm, CommentForm
 from django.urls import reverse
+from taggit.models import Tag
+from django.db.models import Q
 
 def home(request):
     return render(request, 'blog/home.html')
@@ -121,3 +123,32 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         comment = self.get_object()
         return self.request.user == comment.author
+    
+class TaggedPostListView(ListView):
+    """
+    View to display a list of posts filtered by a specific tag.
+    """
+    model = Post
+    template_name = 'blog/home.html' # Reuse the home template
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        return Post.objects.filter(tags__in=[tag]).order_by('-published_date')
+    
+class SearchResultsView(ListView):
+    """
+    View to display search results based on a query.
+    """
+    model = Post
+    template_name = 'blog/search_results.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query) | Q(content__icontains=query)
+            ).order_by('-published_date')
+        return Post.objects.none()

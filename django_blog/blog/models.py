@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 class Post(models.Model):
     """
@@ -13,13 +14,13 @@ class Post(models.Model):
     # on_delete=models.CASCADE means if a User is deleted, their posts are deleted too.
     # related_name='posts' lets us find all posts by a user, e.g., user.posts.all()
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
-
+    tags = TaggableManager()
     
     def __str__(self):
         return self.title
     
     def get_absolute_url(self):
-    return reverse('post-detail', kwargs={'pk': self.pk})
+        return reverse('post-detail', kwargs={'pk': self.pk})
 
     
 class Comment(models.Model):
