@@ -149,6 +149,8 @@ class SearchResultsView(ListView):
         query = self.request.GET.get('q')
         if query:
             return Post.objects.filter(
-                Q(title__icontains=query) | Q(content__icontains=query)
-            ).order_by('-published_date')
+                Q(title__icontains=query) |
+                Q(content__icontains=query) |
+                Q(tags__name__icontains=query)
+            ).distinct().order_by('-published_date')
         return Post.objects.none()
