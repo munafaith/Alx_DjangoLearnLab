@@ -1,0 +1,14 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <article>
+        <h2>{{ object.title }}</h2>
+        <p>By {{ object.author.username }} on {{ object.published_date|date:"F d, Y" }}</p>
+        <p>{{ object.content }}</p>
+    </article>
+    {% if object.author == user %}
+        <div>
+            <a href="{% url 'post-update' object.id %}">Edit</a>
+            <a href="{% url 'post-delete' object.id %}">Delete</a>
+        </div>
+    {% endif %}
+{% endblock content %}
