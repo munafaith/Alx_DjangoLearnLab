@@ -158,3 +158,21 @@ The API supports following other users and viewing a chronological feed of their
   curl -X GET -H "Authorization: Token YOUR_TOKEN" [http://127.0.0.1:8000/api/feed/](http://127.0.0.1:8000/api/feed/)
   ```
 * **Success Response:** A paginated list of post objects.
+
+## Likes and Notifications
+
+The API supports liking posts and receiving notifications for key events. All endpoints require authentication.
+
+### Likes
+* **Like a Post:** `POST /api/posts/<post_id>/like/`
+  * Creates a like relationship and notifies the post's author.
+* **Unlike a Post:** `POST /api/posts/<post_id>/unlike/`
+  * Removes the like relationship.
+
+### Notifications
+* **View Notifications:** `GET /api/notifications/`
+  * Returns a list of all notifications for the authenticated user.
+* **Notification Triggers:** Notifications are automatically created for:
+  * New followers.
+  * Likes on your posts.
+  * Comments on your posts.
