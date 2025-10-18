@@ -23,3 +23,20 @@ The API uses a custom user model which includes fields for `bio`, `profile_pictu
 * **Endpoint:** `POST /api/login/`
 * **Body:** `{ "username": "your_username", "password": "your_password" }`
 * **Success Response:** Returns the user's authentication token.
+
+## Posts and Comments API
+
+The API supports full CRUD operations for posts and comments.
+
+### Posts
+* **List/Create Posts:** `GET` or `POST` to `/api/posts/`
+* **Retrieve/Update/Delete a Post:** `GET`, `PUT/PATCH`, or `DELETE` to `/api/posts/<id>/`
+* **Search Posts:** `GET` to `/api/posts/?search=your_keyword`
+* **Permissions:** All users can view posts. Only authenticated users can create posts. Only the author of a post can edit or delete it.
+
+### Comments
+* **List/Create Comments:** `GET` or `POST` to `/api/comments/`
+* **Retrieve/Update/Delete a Comment:** `GET`, `PUT/PATCH`, or `DELETE` to `/api/comments/<id>/`
+* **Permissions:** All users can view comments. Only authenticated users can create comments. Only the author of a comment can edit or delete it.
+
+**Note:** Creating, updating, or deleting content requires an `Authorization: Token <your_token>` header in your request.
